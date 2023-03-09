@@ -2,6 +2,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <random>
+#include "GLFW/glfw3.h"
+#include "glm/common.hpp"
 #include "glm/fwd.hpp"
 #include "glm/geometric.hpp"
 #include "imgui.h"
@@ -30,12 +32,13 @@ public:
     float getRAlign() const { return r_align; }
 
     explicit boids(p6::Context& context)
-        : position(p6::random::point(context.aspect_ratio())), acceleration(glm::vec2(.0f)), velocity(p6::random::direction()), r(.05f), r_cohesion(.1f), r_align(.2f), maxSpeed(0.02), maxForce(0.03)
+        : position(p6::random::point(context.aspect_ratio())), acceleration(glm::vec2(.0f)), velocity(p6::random::direction()), r(.05f), r_cohesion(.09f), r_align(.12f), maxSpeed(p6::random::number(0.005f, 0.02f)), maxForce(0.08)
     {
     }
     void refreshPos()
     {
-        position += velocity * 0.01f;
+        // std::cout << position.x << "  " << position.y << std::endl;
+        position += velocity * maxSpeed;
     }
 
     void checkOutOfBounce(p6::Context& context)
@@ -56,18 +59,18 @@ public:
         float              dx = other_boid.position[0] - position[0];
         float              dy = other_boid.position[1] - position[1];
         tabDist.push_back((std::sqrt(dx * dx + dy * dy)));
-        tabDist.push_back((std::sqrt(dx * dx + (dy + 1) * (dy + 1))));
-        tabDist.push_back((std::sqrt(dx * dx + (dy - 1) * (dy - 1))));
-        dx += context.aspect_ratio();
+        tabDist.push_back((std::sqrt(dx * dx + (dy + 2) * (dy + 2))));
+        tabDist.push_back((std::sqrt(dx * dx + (dy - 2) * (dy - 2))));
+        dx += 2 * context.aspect_ratio();
 
         tabDist.push_back((std::sqrt(dx * dx + dy * dy)));
-        tabDist.push_back((std::sqrt(dx * dx + (dy + 1) * (dy + 1))));
-        tabDist.push_back((std::sqrt(dx * dx + (dy - 1) * (dy - 1))));
-        dx -= 2 * context.aspect_ratio();
+        tabDist.push_back((std::sqrt(dx * dx + (dy + 2) * (dy + 2))));
+        tabDist.push_back((std::sqrt(dx * dx + (dy - 2) * (dy - 2))));
+        dx -= 4 * context.aspect_ratio();
 
         tabDist.push_back((std::sqrt(dx * dx + dy * dy)));
-        tabDist.push_back((std::sqrt(dx * dx + (dy + 1) * (dy + 1))));
-        tabDist.push_back((std::sqrt(dx * dx + (dy - 1) * (dy - 1))));
+        tabDist.push_back((std::sqrt(dx * dx + (dy + 2) * (dy + 2))));
+        tabDist.push_back((std::sqrt(dx * dx + (dy - 2) * (dy - 2))));
 
         return *std::min_element(tabDist.begin(), tabDist.end());
     }
@@ -131,7 +134,7 @@ public:
                 float distance = distance_to(boid, context);
                 if (distance < r_cohesion && distance > 0.0f)
                 {
-                    cohesion += boid.position;
+                    cohesion += boid.position * distance;
                     count += 1;
                 }
             }
@@ -161,19 +164,14 @@ public:
 
         // Calculate the steering force required to achieve the desired direction
         auto steering = glm::vec2(0.f);
-        if ((desiredDirection - velocity).x > maxForce || (desiredDirection - velocity).y > maxForce)
+        if (glm::abs((desiredDirection).x - velocity.x) > maxForce || glm::abs((desiredDirection).y - velocity.y) > maxForce)
         {
-            if ((desiredDirection - velocity).x > maxForce)
-            {
-                steering = glm::vec2(maxForce, desiredDirection.y - velocity.y);
-            }
-            if ((desiredDirection - velocity).y > maxForce)
-            {
-                steering = glm::vec2(desiredDirection.x - velocity.x, maxForce);
-            }
+            steering = glm::vec2(desiredDirection.x * maxForce, desiredDirection.y * maxForce);
         }
         else
-            steering = (desiredDirection - velocity);
+        {
+            steering = (desiredDirection);
+        }
 
         // Apply the steering force to the acceleration
         acceleration += steering;
@@ -181,11 +179,11 @@ public:
         // Update the velocity and position based on the acceleration
         velocity += acceleration;
         // Limit the speed to the maximum speed
-        if (velocity.x > maxSpeed)
+        /*if (velocity.x > maxSpeed)
             velocity = glm::vec2(maxSpeed, velocity.y);
 
         if (velocity.y > maxSpeed)
-            velocity = glm::vec2(velocity.x, maxSpeed);
+            velocity = glm::vec2(velocity.x, maxSpeed);*/
         // std::cout << velocity.x << velocity.y << std::endl;
         velocity = glm::normalize(velocity);
 
@@ -243,12 +241,22 @@ public:
 
 void drawBoids(const std::vector<boids>& listedPosition, p6::Context& context)
 {
-    context.use_fill = true;
-
+    float length       = 0.01;
+    float thickness    = 0.005;
+    context.use_fill   = true;
     context.use_stroke = false;
-    context.fill       = {0.05f, 0.9f, 0.4f, 0.8f};
+    context.fill       = {0.05f, 0.9f, 0.4f, 1.0f};
     for (auto b : listedPosition)
-        context.triangle(p6::Point2D((b.dirX()) * 0.05 + b.getX(), (b.dirY()) * 0.05 + b.getY()), p6::Point2D(b.getX() + (b.dirY()) * 0.02, b.getY() - (b.dirX()) * 0.02), p6::Point2D(b.getX() - (b.dirY()) * 0.02, b.getY() + (b.dirX()) * 0.02));
+        context.triangle(p6::Point2D((b.dirX()) * length + b.getX(), (b.dirY()) * length + b.getY()), p6::Point2D((b.getX() + (b.dirY()) * thickness) - ((b.dirX()) * length), (b.getY() - (b.dirX()) * thickness) - ((b.dirY()) * length)), p6::Point2D((b.getX() - (b.dirY()) * thickness) - ((b.dirX()) * length), (b.getY() + (b.dirX()) * thickness) - ((b.dirY()) * length)));
+}
+void drawBoids(boids boid, p6::Context& context)
+{
+    float length       = 0.03;
+    float thickness    = 0.025;
+    context.use_fill   = true;
+    context.use_stroke = false;
+    context.fill       = {0.04f, 0.2f, 0.1f, 1.0f};
+    context.triangle(p6::Point2D((boid.dirX()) * length + boid.getX(), (boid.dirY()) * length + boid.getY()), p6::Point2D((boid.getX() + (boid.dirY()) * thickness) - ((boid.dirX()) * length), (boid.getY() - (boid.dirX()) * thickness) - ((boid.dirY()) * length)), p6::Point2D((boid.getX() - (boid.dirY()) * thickness) - ((boid.dirX()) * length), (boid.getY() + (boid.dirX()) * thickness) - ((boid.dirY()) * length)));
 }
 
 void drawRadius(const std::vector<boids>& listedPosition, p6::Context& context)
@@ -259,13 +267,25 @@ void drawRadius(const std::vector<boids>& listedPosition, p6::Context& context)
         context.use_stroke = true;
 
         context.use_fill = false;
-        context.stroke   = {0.1f, 0.3f, 0.4f, 0.2f};
+        context.stroke   = {0.1f, 0.3f, 0.4f, 1.0f};
         context.circle(glm::vec2(b.getX(), b.getY()), b.getR());
-        context.stroke = {0.6f, 0.2f, 0.9f, 0.3f};
+        context.stroke = {0.6f, 0.2f, 0.9f, 1.0f};
         context.circle(glm::vec2(b.getX(), b.getY()), b.getRAlign());
-        context.stroke = {0.9f, 0.7f, 0.1f, 0.5f};
+        context.stroke = {0.9f, 0.7f, 0.1f, 1.0f};
         context.circle(glm::vec2(b.getX(), b.getY()), b.getRCohesion());
     }
+}
+void drawRadius(const boids boid, p6::Context& context)
+{
+    context.use_stroke = false;
+    context.use_stroke = true;
+    context.use_fill   = false;
+    context.stroke     = {0.1f, 0.3f, 0.4f, 1.0f};
+    context.circle(glm::vec2(boid.getX(), boid.getY()), boid.getR());
+    context.stroke = {0.6f, 0.2f, 0.9f, 1.0f};
+    context.circle(glm::vec2(boid.getX(), boid.getY()), boid.getRAlign());
+    context.stroke = {0.9f, 0.7f, 0.1f, 1.0f};
+    context.circle(glm::vec2(boid.getX(), boid.getY()), boid.getRCohesion());
 }
 
 ////////////
@@ -291,9 +311,16 @@ int main(int argc, char* argv[])
     ctx.update = [&]() {
         f.flocking(ctx);
         f.refreshBoids(ctx);
-        ctx.background(p6::Color(0.2, 0.5, 0.05, 0.05));
+        // if (ctx.key_is_held(263))
+        // {
+        //     ctx.background(p6::Color(0.2, 0.5, 0.05, 0.05));
+        // }
+        // else
+        // {
+        ctx.background(p6::Color(0.5, 0.05, 0.2, 0.05));
+        //}
         drawBoids(f.getList(), ctx);
-        drawRadius(f.getList(), ctx);
+        drawRadius(f.getList()[2], ctx);
     };
 
     // Should be done last. It starts the infinite loop.
