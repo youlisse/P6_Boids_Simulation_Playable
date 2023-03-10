@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <random>
-#include "GLFW/glfw3.h"
+// #include "GLFW/glfw3.h"
 #include "glm/common.hpp"
 #include "glm/fwd.hpp"
 #include "glm/geometric.hpp"
@@ -32,13 +32,27 @@ public:
     float getRAlign() const { return r_align; }
 
     explicit boids(p6::Context& context)
-        : position(p6::random::point(context.aspect_ratio())), acceleration(glm::vec2(.0f)), velocity(p6::random::direction()), r(.05f), r_cohesion(.09f), r_align(.12f), maxSpeed(p6::random::number(0.005f, 0.02f)), maxForce(0.08)
+        : position(p6::random::point(context.aspect_ratio())), acceleration(glm::vec2(.0f)), velocity(p6::random::direction()), r(.05f), r_cohesion(.09f), r_align(.12f), maxSpeed(p6::random::number(0.005f, 0.02f)), maxForce(0.3)
     {
     }
     void refreshPos()
     {
         // std::cout << position.x << "  " << position.y << std::endl;
         position += velocity * maxSpeed;
+    }
+    void controlBoids(p6::Context& context)
+    {
+        if (context.key_is_held(262)) // droite
+        {
+            velocity += glm::vec2(velocity.y / 7, -velocity.x / 7);
+        }
+        if (context.key_is_held(263)) // gauche
+        {
+            velocity += glm::vec2(-velocity.y / 7, velocity.x / 7);
+        }
+        checkOutOfBounce(context);
+        velocity = glm::normalize(velocity);
+        refreshPos();
     }
 
     void checkOutOfBounce(p6::Context& context)
@@ -211,16 +225,20 @@ public:
             b.checkOutOfBounce(context);
         }
     }
-
-    void update()
-    {
-    }
-
     void flocking(p6::Context& context)
     {
         for (boids& b : boidsList)
         {
             b.update(boidsList, context);
+        }
+    }
+    void flocking(p6::Context& context, boids b)
+    {
+        std::vector<boids> boidsListPlusMe = boidsList;
+        boidsListPlusMe.push_back(b);
+        for (boids& b : boidsList)
+        {
+            b.update(boidsListPlusMe, context);
         }
     }
 
@@ -241,8 +259,8 @@ public:
 
 void drawBoids(const std::vector<boids>& listedPosition, p6::Context& context)
 {
-    float length       = 0.01;
-    float thickness    = 0.005;
+    float length       = 0.03;
+    float thickness    = 0.02;
     context.use_fill   = true;
     context.use_stroke = false;
     context.fill       = {0.05f, 0.9f, 0.4f, 1.0f};
@@ -255,7 +273,7 @@ void drawBoids(boids boid, p6::Context& context)
     float thickness    = 0.025;
     context.use_fill   = true;
     context.use_stroke = false;
-    context.fill       = {0.04f, 0.2f, 0.1f, 1.0f};
+    context.fill       = {0.9f, 0.2f, 0.1f, 1.0f};
     context.triangle(p6::Point2D((boid.dirX()) * length + boid.getX(), (boid.dirY()) * length + boid.getY()), p6::Point2D((boid.getX() + (boid.dirY()) * thickness) - ((boid.dirX()) * length), (boid.getY() - (boid.dirX()) * thickness) - ((boid.dirY()) * length)), p6::Point2D((boid.getX() - (boid.dirY()) * thickness) - ((boid.dirX()) * length), (boid.getY() + (boid.dirX()) * thickness) - ((boid.dirY()) * length)));
 }
 
@@ -302,25 +320,26 @@ int main(int argc, char* argv[])
     }
 
     //  Actual app
-    auto  ctx = p6::Context{{.title = "Simple-p6-Setup"}};
-    Flock f   = *new Flock();
+    auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
+    ctx.framerate_synced_with_monitor();
+    Flock f = *new Flock();
     f.initBoids(30, ctx);
-
+    auto myBoid = boids(ctx);
     ctx.maximize_window();
-    // Declare your infinite update loop.
+
+    //  Declare your infinite update loop.
     ctx.update = [&]() {
-        f.flocking(ctx);
+        myBoid.controlBoids(ctx);
+        f.flocking(ctx, myBoid);
+        // f.flocking(ctx);
         f.refreshBoids(ctx);
-        // if (ctx.key_is_held(263))
-        // {
-        //     ctx.background(p6::Color(0.2, 0.5, 0.05, 0.05));
-        // }
-        // else
-        // {
-        ctx.background(p6::Color(0.5, 0.05, 0.2, 0.05));
-        //}
+        // ctx.background(p6::Color(0.2, 0.5, 0.05, 0.05));
         drawBoids(f.getList(), ctx);
-        drawRadius(f.getList()[2], ctx);
+        // drawRadius(f.getList()[2], ctx);
+        drawBoids(myBoid, ctx);
+        ctx.fill = {0.0f, 0.f, 0.f, 0.02f};
+
+        ctx.rectangle(p6::Center(), glm::vec2(ctx.aspect_ratio()), p6::Angle());
     };
 
     // Should be done last. It starts the infinite loop.
