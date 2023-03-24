@@ -11,6 +11,11 @@
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "doctest/doctest.h"
 
+struct paramRadius {
+    float rAvoid    = 0.5f;
+    float rCohesion = 0.5f;
+    float rAlign    = 0.5f;
+};
 class boids {
 private:
     glm::vec2 position;
@@ -30,14 +35,16 @@ public:
     float getR() const { return r; }
     float getRCohesion() const { return r_cohesion; }
     float getRAlign() const { return r_align; }
+    void  setR(float value) { r = value; }
+    void  setRCohesion(float value) { r_cohesion = value; }
+    void  setRAlign(float value) { r_align = value; }
 
     explicit boids(p6::Context& context)
-        : position(p6::random::point(context.aspect_ratio())), acceleration(glm::vec2(.0f)), velocity(p6::random::direction()), r(.05f), r_cohesion(.09f), r_align(.12f), maxSpeed(p6::random::number(0.005f, 0.02f)), maxForce(0.3)
+        : position(p6::random::point(context.aspect_ratio())), acceleration(glm::vec2(.0f)), velocity(p6::random::direction()), r(.045f), r_cohesion(.1f), r_align(.12f), maxSpeed(p6::random::number(0.005f, 0.02f)), maxForce(0.3)
     {
     }
     void refreshPos()
     {
-        // std::cout << position.x << "  " << position.y << std::endl;
         position += velocity * maxSpeed;
     }
     void controlBoids(p6::Context& context)
@@ -146,9 +153,9 @@ public:
             if (&boid != this)
             {
                 float distance = distance_to(boid, context);
-                if (distance < r_cohesion && distance > 0.0f)
+                if (distance < r_cohesion && distance > r_cohesion * 0.50f && distance > 0.0f)
                 {
-                    cohesion += boid.position * distance;
+                    cohesion += boid.position;
                     count += 1;
                 }
             }
@@ -255,6 +262,15 @@ public:
             addBoids(b);
         }
     }
+    void refreshParam(paramRadius para)
+    {
+        for (boids& b : boidsList)
+        {
+            b.setR(para.rAvoid);
+            b.setRAlign(para.rAlign);
+            b.setRCohesion(para.rCohesion);
+        }
+    }
 };
 
 void drawBoids(const std::vector<boids>& listedPosition, p6::Context& context)
@@ -321,25 +337,44 @@ int main(int argc, char* argv[])
 
     //  Actual app
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
-    ctx.framerate_synced_with_monitor();
+    // ctx.framerate_synced_with_monitor();
     Flock f = *new Flock();
     f.initBoids(30, ctx);
     auto myBoid = boids(ctx);
     ctx.maximize_window();
 
+    paramRadius para;
+    float       alpha = 0.5f;
+
+    bool radius_show = false;
+    ctx.imgui        = [&]() {
+        ImGui::Begin("param");
+        ImGui::SliderFloat("Alpha", &alpha, 0.f, 1.f);
+        ImGui::SliderFloat("avoidRadius", &para.rAvoid, 0.f, 1.f);
+        ImGui::SliderFloat("cohesionRadius", &para.rCohesion, 0.f, 1.f);
+        ImGui::SliderFloat("alignRadius", &para.rAlign, 0.f, 1.f);
+
+        if (ImGui::Button("Show Radius"))
+            radius_show = !radius_show;
+        ImGui::End();
+    };
+
     //  Declare your infinite update loop.
     ctx.update = [&]() {
         myBoid.controlBoids(ctx);
         f.flocking(ctx, myBoid);
-        // f.flocking(ctx);
         f.refreshBoids(ctx);
-        // ctx.background(p6::Color(0.2, 0.5, 0.05, 0.05));
-        drawBoids(f.getList(), ctx);
-        // drawRadius(f.getList()[2], ctx);
-        drawBoids(myBoid, ctx);
-        ctx.fill = {0.0f, 0.f, 0.f, 0.02f};
-
+        f.refreshParam(para);
+        myBoid.setR(para.rAvoid);
+        myBoid.setRAlign(para.rAlign);
+        myBoid.setRCohesion(para.rCohesion);
+        ctx.fill = {0.f, 0.f, 0.f, alpha};
         ctx.rectangle(p6::Center(), glm::vec2(ctx.aspect_ratio()), p6::Angle());
+
+        drawBoids(f.getList(), ctx);
+        if (radius_show)
+            drawRadius(myBoid, ctx);
+        drawBoids(myBoid, ctx);
     };
 
     // Should be done last. It starts the infinite loop.
