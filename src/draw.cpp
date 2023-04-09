@@ -1,16 +1,23 @@
 #include "draw.hpp"
+#include "boid.hpp"
+#include "enemyBoid.hpp"
+#include "glm/geometric.hpp"
 
-void drawBoids(const std::vector<boids>& listedPosition, p6::Context& context)
+void drawBoids(const std::vector<enemyBoid>& listedPosition, p6::Context& context)
 {
     float length       = 0.03;
     float thickness    = 0.02;
     context.use_fill   = true;
     context.use_stroke = false;
-    context.fill       = {0.05f, 0.9f, 0.4f, 1.0f};
-    for (auto b : listedPosition)
+
+    for (const boids& b : listedPosition)
+    {
+        context.fill = {0.4f + (b.dirX() + b.dirY()) / 4, 0.4f + (b.dirX() + b.dirY()) / 4, 0.4f + (b.dirX() + b.dirY()) / 4.f, 1.f};
         context.triangle(p6::Point2D((b.dirX()) * length + b.getX(), (b.dirY()) * length + b.getY()), p6::Point2D((b.getX() + (b.dirY()) * thickness) - ((b.dirX()) * length), (b.getY() - (b.dirX()) * thickness) - ((b.dirY()) * length)), p6::Point2D((b.getX() - (b.dirY()) * thickness) - ((b.dirX()) * length), (b.getY() + (b.dirX()) * thickness) - ((b.dirY()) * length)));
+    }
 }
-void drawBoids(boids boid, p6::Context& context)
+
+void drawBoids(const controllableBoid& boid, p6::Context& context)
 {
     float length       = 0.03;
     float thickness    = 0.025;
@@ -20,10 +27,10 @@ void drawBoids(boids boid, p6::Context& context)
     context.triangle(p6::Point2D((boid.dirX()) * length + boid.getX(), (boid.dirY()) * length + boid.getY()), p6::Point2D((boid.getX() + (boid.dirY()) * thickness) - ((boid.dirX()) * length), (boid.getY() - (boid.dirX()) * thickness) - ((boid.dirY()) * length)), p6::Point2D((boid.getX() - (boid.dirY()) * thickness) - ((boid.dirX()) * length), (boid.getY() + (boid.dirX()) * thickness) - ((boid.dirY()) * length)));
 }
 
-void drawRadius(const std::vector<boids>& listedPosition, p6::Context& context)
+void drawRadius(const std::vector<enemyBoid>& listedPosition, p6::Context& context)
 {
     context.use_stroke = false;
-    for (auto b : listedPosition)
+    for (const auto& b : listedPosition)
     {
         context.use_stroke = true;
 
@@ -36,7 +43,7 @@ void drawRadius(const std::vector<boids>& listedPosition, p6::Context& context)
         context.circle(glm::vec2(b.getX(), b.getY()), b.getRCohesion());
     }
 }
-void drawRadius(const boids boid, p6::Context& context)
+void drawRadius(const controllableBoid& boid, p6::Context& context)
 {
     context.use_stroke = false;
     context.use_stroke = true;

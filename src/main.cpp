@@ -10,8 +10,10 @@
 #include "p6/p6.h"
 #define DOCTEST_CONFIG_IMPLEMENT
 #include "boid.hpp"
+#include "controllableBoid.hpp"
 #include "doctest/doctest.h"
 #include "draw.hpp"
+#include "enemyBoid.hpp"
 #include "flock.hpp"
 
 int main(int argc, char* argv[])
@@ -25,19 +27,24 @@ int main(int argc, char* argv[])
     }
     auto  ctx = p6::Context{{.title = "Simple-p6-Setup"}};
     Flock f   = *new Flock();
-    f.initBoids(30, ctx);
-    auto myBoid = boids(ctx);
+    f.initBoids(80, ctx);
+    auto myBoid = controllableBoid(ctx);
     ctx.maximize_window();
+    ctx.background(1.0f);
     paramRadius para;
-    float       alpha = 0.5f;
+    float       alpha = 0.2f;
 
     bool radius_show = false;
-    ctx.imgui        = [&]() {
+    bool trail       = false;
+
+    ctx.imgui = [&]() {
         ImGui::Begin("param");
-        ImGui::SliderFloat("Alpha", &alpha, 0.f, 1.f);
-        ImGui::SliderFloat("avoidRadius", &para.rAvoid, 0.f, 1.f);
-        ImGui::SliderFloat("cohesionRadius", &para.rCohesion, 0.f, 1.f);
-        ImGui::SliderFloat("alignRadius", &para.rAlign, 0.f, 1.f);
+        if (ImGui::Button("trail"))
+            trail = !trail;
+        ImGui::SliderFloat("Alpha", &alpha, 0.f, .1f);
+        ImGui::SliderFloat("avoidRadius", &para.rAvoid, 0.f, .5f);
+        ImGui::SliderFloat("cohesionRadius", &para.rCohesion, 0.f, .7f);
+        ImGui::SliderFloat("alignRadius", &para.rAlign, 0.f, .9f);
 
         if (ImGui::Button("Show Radius"))
             radius_show = !radius_show;
@@ -51,9 +58,11 @@ int main(int argc, char* argv[])
         myBoid.setR(para.rAvoid);
         myBoid.setRAlign(para.rAlign);
         myBoid.setRCohesion(para.rCohesion);
-        ctx.fill = {0.f, 0.f, 0.f, alpha};
-        ctx.rectangle(p6::Center(), glm::vec2(ctx.aspect_ratio()), p6::Angle());
-
+        ctx.fill = {.9f, .9f, .9f, alpha};
+        if (!trail)
+            ctx.rectangle(p6::Center(), glm::vec2(ctx.aspect_ratio()), p6::Angle());
+        else
+            ctx.background(p6::Color(.9f, .9f, .9f, alpha));
         drawBoids(f.getList(), ctx);
         if (radius_show)
             drawRadius(myBoid, ctx);
