@@ -18,9 +18,9 @@ public:
     Flock()
         : enemyBoidsList(*new std::vector<enemyBoid>()), boidsList(*new std::vector<boids>()){};
     void refreshBoids(p6::Context& context);
-    void flocking(p6::Context& context);
-    void flocking(p6::Context& context, controllableBoid& b);
+    void flocking(p6::Context& context, float percent);
+    void flocking(p6::Context& context, controllableBoid& b, float percent);
     void addBoids(enemyBoid& boids);
     void initBoids(int nbElem, p6::Context& context);
-    void refreshParam(paramRadius para);
+    void refreshParam(paramRadius para, float maxForce);
 };

@@ -17,19 +17,20 @@ void Flock::refreshBoids(p6::Context& context)
         b.refreshPos();
     }
 }
-void Flock::flocking(p6::Context& context)
+void Flock::flocking(p6::Context& context, float percent)
 {
     for (enemyBoid& boid : enemyBoidsList)
     {
-        boid.update(boidsList, context);
+        boid.update(boidsList, context, percent);
     }
 }
-void Flock::flocking(p6::Context& context, controllableBoid& b)
+void Flock::flocking(p6::Context& context, controllableBoid& b, float percent)
 {
     std::vector<boids> boidsListPlusMe = boidsList;
+    boidsListPlusMe.push_back(b);
     for (enemyBoid& boid : enemyBoidsList)
     {
-        boid.update(boidsListPlusMe, context);
+        boid.update(boidsListPlusMe, context, percent);
     }
 }
 
@@ -47,12 +48,13 @@ void Flock::initBoids(int nbElem, p6::Context& context)
         addBoids(b);
     }
 }
-void Flock::refreshParam(paramRadius para)
+void Flock::refreshParam(paramRadius para, float maxForce)
 {
     for (enemyBoid& b : enemyBoidsList)
     {
         b.setR(para.rAvoid);
         b.setRAlign(para.rAlign);
         b.setRCohesion(para.rCohesion);
+        b.setMaxForce(maxForce);
     }
 }

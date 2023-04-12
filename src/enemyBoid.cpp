@@ -74,12 +74,11 @@ glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::
     return cohesion;
 }
 
-void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context)
+void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context, float percent)
 {
     glm::vec2 separation = calculateSeparation(boidsList, context);
     glm::vec2 alignment  = calculateAlignment(boidsList, context);
     glm::vec2 cohesion   = calculateCohesion(boidsList, context);
-    // std::cout << &separation << &alignment << &cohesion << '\n';
 
     glm::vec2 desiredDirection = separation + alignment + cohesion;
 
@@ -99,7 +98,7 @@ void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context
     acceleration += steering;
 
     // Update the velocity and position based on the acceleration
-    velocity += acceleration;
+    velocity += acceleration * percent;
     // Limit the speed to the maximum speed
     /*if (velocity.x > maxSpeed)
         velocity = glm::vec2(maxSpeed, velocity.y);

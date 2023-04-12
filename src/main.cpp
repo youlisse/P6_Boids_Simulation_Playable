@@ -32,7 +32,9 @@ int main(int argc, char* argv[])
     ctx.maximize_window();
     ctx.background(1.0f);
     paramRadius para;
-    float       alpha = 0.2f;
+    float       alpha    = 0.2f;
+    float       stering  = 0.2f;
+    float       maxForce = 0.2f;
 
     bool radius_show = false;
     bool trail       = false;
@@ -45,6 +47,8 @@ int main(int argc, char* argv[])
         ImGui::SliderFloat("avoidRadius", &para.rAvoid, 0.f, .5f);
         ImGui::SliderFloat("cohesionRadius", &para.rCohesion, 0.f, .7f);
         ImGui::SliderFloat("alignRadius", &para.rAlign, 0.f, .9f);
+        ImGui::SliderFloat("steringCoef", &stering, 0.f, 1.f);
+        ImGui::SliderFloat("maxForce", &maxForce, 0.f, 1.f);
 
         if (ImGui::Button("Show Radius"))
             radius_show = !radius_show;
@@ -52,12 +56,13 @@ int main(int argc, char* argv[])
     };
     ctx.update = [&]() {
         myBoid.controlBoids(ctx);
-        f.flocking(ctx, myBoid);
+        f.flocking(ctx, myBoid, stering);
         f.refreshBoids(ctx);
-        f.refreshParam(para);
+        f.refreshParam(para, maxForce);
         myBoid.setR(para.rAvoid);
         myBoid.setRAlign(para.rAlign);
         myBoid.setRCohesion(para.rCohesion);
+
         ctx.fill = {.9f, .9f, .9f, alpha};
         if (!trail)
             ctx.rectangle(p6::Center(), glm::vec2(ctx.aspect_ratio()), p6::Angle());

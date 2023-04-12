@@ -28,6 +28,10 @@ void boids::setRAlign(float value)
 {
     r_align = value;
 }
+void boids::setMaxForce(float value)
+{
+    maxForce = value;
+}
 float boids::getR() const
 {
     return r;
