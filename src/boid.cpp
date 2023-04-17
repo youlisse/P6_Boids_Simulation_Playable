@@ -2,66 +2,66 @@
 
 float boids::getX() const
 {
-    return position.x;
+    return _position.x;
 }
 float boids::getY() const
 {
-    return position.y;
+    return _position.y;
 }
 float boids::dirX() const
 {
-    return velocity.x;
+    return _direction.x;
 }
 float boids::dirY() const
 {
-    return velocity.y;
+    return _direction.y;
 }
 void boids::setR(float value)
 {
-    r = value;
+    _rAvoid = value;
 }
 void boids::setRCohesion(float value)
 {
-    r_cohesion = value;
+    _rCohesion = value;
 }
 void boids::setRAlign(float value)
 {
-    r_align = value;
+    _rAlign = value;
 }
 void boids::setMaxForce(float value)
 {
-    maxForce = value;
+    _maxForce = value;
 }
 float boids::getR() const
 {
-    return r;
+    return _rAvoid;
 }
 float boids::getRCohesion() const
 {
-    return r_cohesion;
+    return _rCohesion;
 }
 float boids::getRAlign() const
 {
-    return r_align;
+    return _rAlign;
 }
 
 void boids::checkOutOfBounce(p6::Context& context)
 {
-    if (position.x > context.aspect_ratio())
-        position.x = -context.aspect_ratio();
-    if (position.x < -context.aspect_ratio())
-        position.x = context.aspect_ratio();
-    if (position.y > 1)
-        position.y = -1;
-    if (position.y < -1)
-        position.y = 1;
+    if (_position.x > context.aspect_ratio())
+        _position.x = -context.aspect_ratio();
+    if (_position.x < -context.aspect_ratio())
+        _position.x = context.aspect_ratio();
+    if (_position.y > 1)
+        _position.y = -1;
+    if (_position.y < -1)
+        _position.y = 1;
 }
 
 float boids::distance_to(boids other_boid, p6::Context& context)
 {
     std::vector<float> tabDist;
-    float              dx = other_boid.position[0] - position[0];
-    float              dy = other_boid.position[1] - position[1];
+    float              dx = other_boid._position[0] - _position[0];
+    float              dy = other_boid._position[1] - _position[1];
     tabDist.push_back((std::sqrt(dx * dx + dy * dy)));
     tabDist.push_back((std::sqrt(dx * dx + (dy + 2) * (dy + 2))));
     tabDist.push_back((std::sqrt(dx * dx + (dy - 2) * (dy - 2))));
@@ -80,5 +80,5 @@ float boids::distance_to(boids other_boid, p6::Context& context)
 }
 void boids::refreshPos()
 {
-    position += velocity / 40.f;
+    _position += _direction * _maxSpeed;
 }

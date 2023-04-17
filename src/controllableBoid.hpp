@@ -5,11 +5,19 @@
 #define OUR_BOID_HPP
 
 class controllableBoid : public boids {
+private:
+    mutable float _health{};
+
 public:
     ~controllableBoid() override = default;
-    void controlBoids(p6::Context& context);
+    void  controlBoids(p6::Context& context);
+    float getLife() const;
+    void  lowerLife();
     explicit controllableBoid(p6::Context& context)
-        : boids(context){};
+        : boids(context), _health(1.f)
+    {
+        this->_maxSpeed = .032f;
+    };
 };
 
 #endif // OUR_BOID_HPP

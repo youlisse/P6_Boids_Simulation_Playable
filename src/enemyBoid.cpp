@@ -10,9 +10,9 @@ glm::vec2 enemyBoid::calculateSeparation(const std::vector<boids>& boidsList, p6
         if (&boid != this)
         {
             float distance = distance_to(boid, context);
-            if (distance < r && distance > 0.0f)
+            if (distance < _rAvoid && distance > 0.0f)
             {
-                glm::vec2 diff = position - glm::vec2(boid.getX(), boid.getY());
+                glm::vec2 diff = _position - glm::vec2(boid.getX(), boid.getY());
                 separation += glm::normalize(diff);
                 count += 1;
             }
@@ -34,7 +34,7 @@ glm::vec2 enemyBoid::calculateAlignment(const std::vector<boids>& boidsList, p6:
         if (&boid != this)
         {
             float distance = distance_to(boid, context);
-            if (distance < r_align && distance > 0.0f)
+            if (distance < _rAlign && distance > 0.0f)
             {
                 alignment += glm::vec2(boid.dirX(), boid.dirY());
                 count += 1;
@@ -58,7 +58,7 @@ glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::
         if (&boid != this)
         {
             float distance = distance_to(boid, context);
-            if (distance < r_cohesion && distance > r_cohesion * 0.50f && distance > 0.0f)
+            if (distance < _rCohesion && distance > _rCohesion * 0.50f && distance > 0.0f)
             {
                 cohesion += glm::vec2(boid.getX(), boid.getY());
                 count += 1;
@@ -68,7 +68,7 @@ glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::
     if (count > 0)
     {
         cohesion /= static_cast<float>(count);
-        cohesion -= position;
+        cohesion -= _position;
         cohesion = glm::normalize(cohesion);
     }
     return cohesion;
@@ -86,28 +86,20 @@ void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context
         desiredDirection = glm::normalize(desiredDirection);
 
     auto steering = glm::vec2(0.f);
-    if (glm::abs((desiredDirection).x - velocity.x) > maxForce || glm::abs((desiredDirection).y - velocity.y) > maxForce)
+    if (glm::abs((desiredDirection).x - _direction.x) > _maxForce || glm::abs((desiredDirection).y - _direction.y) > _maxForce)
     {
-        steering = glm::vec2(desiredDirection.x * maxForce, desiredDirection.y * maxForce);
+        steering = glm::vec2(desiredDirection.x * _maxForce, desiredDirection.y * _maxForce);
     }
     else
     {
         steering = (desiredDirection);
     }
 
-    acceleration += steering;
+    _velocity += steering;
 
-    // Update the velocity and position based on the acceleration
-    velocity += acceleration * percent;
-    // Limit the speed to the maximum speed
-    /*if (velocity.x > maxSpeed)
-        velocity = glm::vec2(maxSpeed, velocity.y);
+    _direction += _velocity * percent;
 
-    if (velocity.y > maxSpeed)
-        velocity = glm::vec2(velocity.x, maxSpeed);*/
+    _direction = glm::normalize(_direction);
 
-    // std::cout << velocity.x << velocity.y << std::endl;
-    velocity = glm::normalize(velocity);
-
-    acceleration *= 0;
+    _velocity *= 0;
 }

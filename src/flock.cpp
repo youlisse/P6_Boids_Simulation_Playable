@@ -5,12 +5,12 @@
 
 std::vector<enemyBoid> Flock::getList()
 {
-    return enemyBoidsList;
+    return _enemyBoidsList;
 }
 
 void Flock::refreshBoids(p6::Context& context)
 {
-    for (enemyBoid& b : enemyBoidsList)
+    for (enemyBoid& b : _enemyBoidsList)
     {
         b.checkOutOfBounce(context);
 
@@ -19,16 +19,16 @@ void Flock::refreshBoids(p6::Context& context)
 }
 void Flock::flocking(p6::Context& context, float percent)
 {
-    for (enemyBoid& boid : enemyBoidsList)
+    for (enemyBoid& boid : _enemyBoidsList)
     {
-        boid.update(boidsList, context, percent);
+        boid.update(_boidsList, context, percent);
     }
 }
 void Flock::flocking(p6::Context& context, controllableBoid& b, float percent)
 {
-    std::vector<boids> boidsListPlusMe = boidsList;
+    std::vector<boids> boidsListPlusMe = _boidsList;
     boidsListPlusMe.push_back(b);
-    for (enemyBoid& boid : enemyBoidsList)
+    for (enemyBoid& boid : _enemyBoidsList)
     {
         boid.update(boidsListPlusMe, context, percent);
     }
@@ -36,8 +36,8 @@ void Flock::flocking(p6::Context& context, controllableBoid& b, float percent)
 
 void Flock::addBoids(enemyBoid& boid)
 {
-    enemyBoidsList.push_back(boid);
-    boidsList.push_back(boid);
+    _enemyBoidsList.push_back(boid);
+    _boidsList.push_back(boid);
 }
 
 void Flock::initBoids(int nbElem, p6::Context& context)
@@ -50,11 +50,20 @@ void Flock::initBoids(int nbElem, p6::Context& context)
 }
 void Flock::refreshParam(paramRadius para, float maxForce)
 {
-    for (enemyBoid& b : enemyBoidsList)
+    for (enemyBoid& b : _enemyBoidsList)
     {
-        b.setR(para.rAvoid);
-        b.setRAlign(para.rAlign);
-        b.setRCohesion(para.rCohesion);
+        b.setR(para._rAvoid);
+        b.setRAlign(para._rAlign);
+        b.setRCohesion(para._rCohesion);
         b.setMaxForce(maxForce);
+    }
+}
+void Flock::killBoid(controllableBoid& b)
+{
+    b.lowerLife();
+    if (!_enemyBoidsList.empty())
+    {
+        _enemyBoidsList.pop_back();
+        _boidsList.pop_back();
     }
 }

@@ -55,3 +55,12 @@ void drawRadius(const controllableBoid& boid, p6::Context& context)
     context.stroke = {0.9f, 0.7f, 0.1f, 1.0f};
     context.circle(glm::vec2(boid.getX(), boid.getY()), boid.getRCohesion());
 }
+void drawLife(float value, p6::Context& context)
+{
+    context.fill       = {.0f, .5f, 1.f, 1.0f};
+    context.use_fill   = true;
+    context.use_stroke = false;
+    context.rectangle(p6::TopLeftCorner(-context.aspect_ratio(), 1.f), glm::vec2(value * context.aspect_ratio() / 5, 0.02f), p6::Angle());
+}
+
+// -context.aspect_ratio(), -1
