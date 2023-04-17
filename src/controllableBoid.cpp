@@ -17,10 +17,10 @@ void controllableBoid::controlBoids(p6::Context& context)
 float controllableBoid::getLife() const
 {
     // std::cout << this->_health << '\n';
-    this->_health -= 0.003f;
+    this->_health -= 0.001f;
     return this->_health;
 }
-void controllableBoid::lowerLife()
+void controllableBoid::addLife()
 {
     this->_health += 0.06f;
 }

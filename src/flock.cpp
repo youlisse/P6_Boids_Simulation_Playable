@@ -13,7 +13,6 @@ void Flock::refreshBoids(p6::Context& context)
     for (enemyBoid& b : _enemyBoidsList)
     {
         b.checkOutOfBounce(context);
-
         b.refreshPos();
     }
 }
@@ -48,7 +47,7 @@ void Flock::initBoids(int nbElem, p6::Context& context)
         addBoids(b);
     }
 }
-void Flock::refreshParam(paramRadius para, float maxForce)
+void Flock::refreshParam(paramRadius para, float maxForce, controllableBoid& ourBoid)
 {
     for (enemyBoid& b : _enemyBoidsList)
     {
@@ -57,13 +56,40 @@ void Flock::refreshParam(paramRadius para, float maxForce)
         b.setRCohesion(para._rCohesion);
         b.setMaxForce(maxForce);
     }
+    ourBoid.setR(para._rAvoid);
+    ourBoid.setRAlign(para._rAlign);
+    ourBoid.setRCohesion(para._rCohesion);
+    ourBoid.setMaxForce(maxForce);
 }
 void Flock::killBoid(controllableBoid& b)
 {
-    b.lowerLife();
+    b.addLife();
     if (!_enemyBoidsList.empty())
     {
         _enemyBoidsList.pop_back();
         _boidsList.pop_back();
+    }
+}
+
+void Flock::checkCollision(p6::Context& context, controllableBoid& ourBoid, float radius)
+{
+    float distance = 0.f;
+    int   id       = -5;
+    for (enemyBoid& b : _enemyBoidsList)
+    {
+        distance = b.distanceTo(ourBoid, context);
+        if (distance < radius)
+        {
+            // kill boid
+            id = b.getId();
+            for (int i = 0; i < static_cast<int>(_enemyBoidsList.size()); i++)
+                if (_enemyBoidsList[i].checkId(id))
+                {
+                    _enemyBoidsList.erase(_enemyBoidsList.begin() + i);
+                    _boidsList.erase(_boidsList.begin() + i);
+                }
+            // refresh life
+            ourBoid.addLife();
+        }
     }
 }

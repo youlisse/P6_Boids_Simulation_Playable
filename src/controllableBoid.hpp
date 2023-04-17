@@ -12,7 +12,7 @@ public:
     ~controllableBoid() override = default;
     void  controlBoids(p6::Context& context);
     float getLife() const;
-    void  lowerLife();
+    void  addLife();
     explicit controllableBoid(p6::Context& context)
         : boids(context), _health(1.f)
     {

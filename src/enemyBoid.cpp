@@ -9,7 +9,7 @@ glm::vec2 enemyBoid::calculateSeparation(const std::vector<boids>& boidsList, p6
     {
         if (&boid != this)
         {
-            float distance = distance_to(boid, context);
+            float distance = distanceTo(boid, context);
             if (distance < _rAvoid && distance > 0.0f)
             {
                 glm::vec2 diff = _position - glm::vec2(boid.getX(), boid.getY());
@@ -33,7 +33,7 @@ glm::vec2 enemyBoid::calculateAlignment(const std::vector<boids>& boidsList, p6:
     {
         if (&boid != this)
         {
-            float distance = distance_to(boid, context);
+            float distance = distanceTo(boid, context);
             if (distance < _rAlign && distance > 0.0f)
             {
                 alignment += glm::vec2(boid.dirX(), boid.dirY());
@@ -57,7 +57,7 @@ glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::
     {
         if (&boid != this)
         {
-            float distance = distance_to(boid, context);
+            float distance = distanceTo(boid, context);
             if (distance < _rCohesion && distance > _rCohesion * 0.50f && distance > 0.0f)
             {
                 cohesion += glm::vec2(boid.getX(), boid.getY());

@@ -1,5 +1,14 @@
 #include "boid.hpp"
 
+bool boids::checkId(int id) const
+{
+    return this->_id == id;
+}
+
+int boids::getId() const
+{
+    return this->_id;
+}
 float boids::getX() const
 {
     return _position.x;
@@ -57,7 +66,7 @@ void boids::checkOutOfBounce(p6::Context& context)
         _position.y = 1;
 }
 
-float boids::distance_to(boids other_boid, p6::Context& context)
+float boids::distanceTo(boids other_boid, p6::Context& context)
 {
     std::vector<float> tabDist;
     float              dx = other_boid._position[0] - _position[0];

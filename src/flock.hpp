@@ -22,6 +22,7 @@ public:
     void flocking(p6::Context& context, controllableBoid& b, float percent);
     void addBoids(enemyBoid& boids);
     void initBoids(int nbElem, p6::Context& context);
-    void refreshParam(paramRadius para, float maxForce);
+    void refreshParam(paramRadius para, float maxForce, controllableBoid& ourBoid);
     void killBoid(controllableBoid& b);
+    void checkCollision(p6::Context& context, controllableBoid& ourBoid, float radius);
 };

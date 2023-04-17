@@ -17,7 +17,7 @@ void drawBoids(const std::vector<enemyBoid>& listedPosition, p6::Context& contex
     }
 }
 
-void drawBoids(const controllableBoid& boid, p6::Context& context)
+void drawBoid(const controllableBoid& boid, p6::Context& context)
 {
     float length       = 0.03;
     float thickness    = 0.025;
@@ -43,8 +43,10 @@ void drawRadius(const std::vector<enemyBoid>& listedPosition, p6::Context& conte
         context.circle(glm::vec2(b.getX(), b.getY()), b.getRCohesion());
     }
 }
-void drawRadius(const controllableBoid& boid, p6::Context& context)
+void drawRadius(const controllableBoid& boid, p6::Context& context, bool radiusShow)
 {
+    if (!radiusShow)
+        return;
     context.use_stroke = false;
     context.use_stroke = true;
     context.use_fill   = false;
@@ -61,6 +63,15 @@ void drawLife(float value, p6::Context& context)
     context.use_fill   = true;
     context.use_stroke = false;
     context.rectangle(p6::TopLeftCorner(-context.aspect_ratio(), 1.f), glm::vec2(value * context.aspect_ratio() / 5, 0.02f), p6::Angle());
+}
+
+void drawBackground(p6::Context& context, bool trail, float alpha)
+{
+    context.fill = {.9f, .9f, .9f, alpha};
+    if (!trail)
+        context.rectangle(p6::Center(), glm::vec2(context.aspect_ratio()), p6::Angle());
+    else
+        context.background(p6::Color(.9f, .9f, .9f, alpha));
 }
 
 // -context.aspect_ratio(), -1

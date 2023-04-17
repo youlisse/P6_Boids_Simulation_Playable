@@ -15,9 +15,15 @@
 #include "imgui.h"
 #include "p6/p6.h"
 // #include "GLFW/glfw3.h"
-
 int main(int argc, char* argv[])
+
 {
+    paramRadius para;
+    float       _alpha      = 0.2f;
+    float       _stering    = 0.2f;
+    float       _maxForce   = 0.2f;
+    bool        _radiusShow = false;
+    bool        _trail      = false;
     {
         if (doctest::Context{}.run() != 0)
             return EXIT_FAILURE;
@@ -25,32 +31,25 @@ int main(int argc, char* argv[])
         if (no_gpu_available)
             return EXIT_SUCCESS;
     }
-    auto  _ctx = p6::Context{{.title = "Boids seeker"}};
-    Flock _f   = *new Flock();
-    _f.initBoids(80, _ctx);
-    auto _myBoid = controllableBoid(_ctx);
+    auto _ctx = p6::Context{{.title = "Boids seeker"}};
     _ctx.maximize_window();
-    paramRadius para;
-    float       _alpha    = 0.2f;
-    float       _stering  = 0.2f;
-    float       _maxForce = 0.2f;
 
-    bool _radius_show = false;
-    bool _trail       = false;
+    Flock _f = *new Flock();
+    _f.initBoids(10, _ctx);
+    controllableBoid _myBoid = controllableBoid(_ctx);
 
     _ctx.imgui = [&]() {
         ImGui::Begin("param");
         if (ImGui::Button("trail"))
             _trail = !_trail;
+        if (ImGui::Button("Show Radius"))
+            _radiusShow = !_radiusShow;
         ImGui::SliderFloat("Alpha", &_alpha, 0.f, .1f);
         ImGui::SliderFloat("avoidRadius", &para._rAvoid, 0.f, .5f);
         ImGui::SliderFloat("cohesionRadius", &para._rCohesion, 0.f, .7f);
         ImGui::SliderFloat("alignRadius", &para._rAlign, 0.f, .9f);
         ImGui::SliderFloat("steringCoef", &_stering, 0.f, 1.f);
         ImGui::SliderFloat("maxForce", &_maxForce, 0.f, 1.f);
-
-        if (ImGui::Button("Show Radius"))
-            _radius_show = !_radius_show;
         if (ImGui::Button("Execute innocent boid"))
             _f.killBoid(_myBoid);
         if (ImGui::Button("Give birth"))
@@ -61,24 +60,15 @@ int main(int argc, char* argv[])
         ImGui::End();
     };
     _ctx.update = [&]() {
+        drawBackground(_ctx, _trail, _alpha);
         _myBoid.controlBoids(_ctx);
         _f.flocking(_ctx, _myBoid, _stering);
         _f.refreshBoids(_ctx);
-        _f.refreshParam(para, _maxForce);
-        _myBoid.setR(para._rAvoid);
-        _myBoid.setRAlign(para._rAlign);
-        _myBoid.setRCohesion(para._rCohesion);
-
-        _ctx.fill = {.9f, .9f, .9f, _alpha};
-        if (!_trail)
-            _ctx.rectangle(p6::Center(), glm::vec2(_ctx.aspect_ratio()), p6::Angle());
-        else
-            _ctx.background(p6::Color(.9f, .9f, .9f, _alpha));
+        _f.refreshParam(para, _maxForce, _myBoid);
+        _f.checkCollision(_ctx, _myBoid, 0.1f);
         drawBoids(_f.getList(), _ctx);
-        if (_radius_show)
-            drawRadius(_myBoid, _ctx);
-        drawBoids(_myBoid, _ctx);
-
+        drawRadius(_myBoid, _ctx, _radiusShow);
+        drawBoid(_myBoid, _ctx);
         drawLife(_myBoid.getLife(), _ctx);
     };
     _ctx.start();
