@@ -1,7 +1,14 @@
 #include "draw.hpp"
 #include "boid.hpp"
 #include "enemyBoid.hpp"
+#include "flock.hpp"
 #include "glm/geometric.hpp"
+
+std::u16string to_u16string(int const& i)
+{
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t, 0x10ffff, std::little_endian>, char16_t> conv;
+    return conv.from_bytes(std::to_string(i));
+}
 
 void drawBoids(const std::vector<enemyBoid>& listedPosition, p6::Context& context)
 {
@@ -74,4 +81,8 @@ void drawBackground(p6::Context& context, bool trail, float alpha)
         context.background(p6::Color(.9f, .9f, .9f, alpha));
 }
 
-// -context.aspect_ratio(), -1
+void printKill(p6::Context& context, Flock& f)
+{
+    const std::u16string text = to_u16string(f.getScore());
+    context.text(text, p6::Center(context.aspect_ratio() - context.aspect_ratio() / 33, 1.f - 0.07), p6::Angle());
+}

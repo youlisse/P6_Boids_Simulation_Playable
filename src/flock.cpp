@@ -1,4 +1,6 @@
 #include "flock.hpp"
+#include <ratio>
+#include <string>
 #include "boid.hpp"
 #include "controllableBoid.hpp"
 #include "enemyBoid.hpp"
@@ -90,6 +92,12 @@ void Flock::checkCollision(p6::Context& context, controllableBoid& ourBoid, floa
                 }
             // refresh life
             ourBoid.addLife();
+            _score++;
         }
     }
+}
+
+int Flock::getScore() const
+{
+    return _score;
 }

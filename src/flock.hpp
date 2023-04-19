@@ -12,11 +12,12 @@ class Flock {
 private:
     std::vector<enemyBoid> _enemyBoidsList;
     std::vector<boids>     _boidsList;
+    int                    _score;
 
 public:
     std::vector<enemyBoid> getList();
     Flock()
-        : _enemyBoidsList(*new std::vector<enemyBoid>()), _boidsList(*new std::vector<boids>()){};
+        : _enemyBoidsList(*new std::vector<enemyBoid>()), _boidsList(*new std::vector<boids>()), _score(0){};
     void refreshBoids(p6::Context& context);
     void flocking(p6::Context& context, float percent);
     void flocking(p6::Context& context, controllableBoid& b, float percent);
@@ -25,4 +26,5 @@ public:
     void refreshParam(paramRadius para, float maxForce, controllableBoid& ourBoid);
     void killBoid(controllableBoid& b);
     void checkCollision(p6::Context& context, controllableBoid& ourBoid, float radius);
+    int  getScore() const;
 };

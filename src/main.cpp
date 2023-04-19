@@ -70,6 +70,7 @@ int main(int argc, char* argv[])
         drawRadius(_myBoid, _ctx, _radiusShow);
         drawBoid(_myBoid, _ctx);
         drawLife(_myBoid.getLife(), _ctx);
+        printKill(_ctx, _f);
     };
     _ctx.start();
 }
