@@ -18,11 +18,11 @@ void Flock::refreshBoids(p6::Context& context)
         b.refreshPos();
     }
 }
-void Flock::flocking(p6::Context& context, float percent)
+void Flock::flocking(p6::Context& context, float percentSteering)
 {
     for (enemyBoid& boid : _enemyBoidsList)
     {
-        boid.update(_boidsList, context, percent);
+        boid.update(_boidsList, context, percentSteering);
     }
 }
 void Flock::flocking(p6::Context& context, controllableBoid& b, float percent)

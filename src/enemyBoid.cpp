@@ -7,8 +7,9 @@ glm::vec2 enemyBoid::calculateSeparation(const std::vector<boids>& boidsList, p6
     int       count      = 0;
     for (boids boid : boidsList)
     {
-        if (&boid != this)
+        if (&boid != this && boid.whoAmI())
         {
+
             float distance = distanceTo(boid, context);
             if (distance < _rAvoid && distance > 0.0f)
             {
@@ -31,7 +32,7 @@ glm::vec2 enemyBoid::calculateAlignment(const std::vector<boids>& boidsList, p6:
     int       count = 0;
     for (boids boid : boidsList)
     {
-        if (&boid != this)
+        if (&boid != this && !boid.whoAmI())
         {
             float distance = distanceTo(boid, context);
             if (distance < _rAlign && distance > 0.0f)
@@ -55,7 +56,7 @@ glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::
     int       count = 0;
     for (boids boid : boidsList)
     {
-        if (&boid != this)
+        if (&boid != this && !boid.whoAmI())
         {
             float distance = distanceTo(boid, context);
             if (distance < _rCohesion && distance > _rCohesion * 0.50f && distance > 0.0f)
@@ -74,13 +75,16 @@ glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::
     return cohesion;
 }
 
-void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context, float percent)
+void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context, float percentSteering)
 {
-    glm::vec2 separation = calculateSeparation(boidsList, context);
+    float weightAlignement=1.f;
+    float weightSeparation=1.f;
+    float weightCohesion=1.f;
+       glm::vec2 separation = calculateSeparation(boidsList, context);
     glm::vec2 alignment  = calculateAlignment(boidsList, context);
     glm::vec2 cohesion   = calculateCohesion(boidsList, context);
 
-    glm::vec2 desiredDirection = separation + alignment + cohesion;
+    glm::vec2 desiredDirection = separation*weightSeparation+ alignment* weightAlignement+ cohesion*weightCohesion;
 
     if (desiredDirection != glm::vec2(0.f))
         desiredDirection = glm::normalize(desiredDirection);
@@ -97,7 +101,7 @@ void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context
 
     _velocity += steering;
 
-    _direction += _velocity * percent;
+    _direction += _velocity * percentSteering;
 
     _direction = glm::normalize(_direction);
 

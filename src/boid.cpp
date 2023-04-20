@@ -89,5 +89,7 @@ float boids::distanceTo(boids other_boid, p6::Context& context)
 }
 void boids::refreshPos()
 {
-    _position += _direction * _maxSpeed;
+    _position += _direction * _maxSpeed * 0.4f;
 }
+
+bool boids::whoAmI(){return _team;}

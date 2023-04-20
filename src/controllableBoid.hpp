@@ -17,6 +17,7 @@ public:
         : boids(context), _health(1.f)
     {
         this->_maxSpeed = .032f;
+       this->_team = true ;
     };
 };
 

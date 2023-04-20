@@ -12,8 +12,8 @@ std::u16string to_u16string(int const& i)
 
 void drawBoids(const std::vector<enemyBoid>& listedPosition, p6::Context& context)
 {
-    float length       = 0.03;
-    float thickness    = 0.02;
+    float length       = 0.03 / 2.f;
+    float thickness    = 0.02 / 2.f;
     context.use_fill   = true;
     context.use_stroke = false;
 
@@ -26,8 +26,8 @@ void drawBoids(const std::vector<enemyBoid>& listedPosition, p6::Context& contex
 
 void drawBoid(const controllableBoid& boid, p6::Context& context)
 {
-    float length       = 0.03;
-    float thickness    = 0.025;
+    float length       = 0.03 / 2.f;
+    float thickness    = 0.025 / 2.f;
     context.use_fill   = true;
     context.use_stroke = false;
     context.fill       = {1.f, 1.f, 1.f, 1.0f};

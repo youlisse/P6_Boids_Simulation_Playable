@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
     _ctx.maximize_window();
 
     Flock _f = *new Flock();
-    _f.initBoids(10, _ctx);
+    _f.initBoids(40, _ctx);
     controllableBoid _myBoid = controllableBoid(_ctx);
 
     _ctx.imgui = [&]() {
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
         _f.flocking(_ctx, _myBoid, _stering);
         _f.refreshBoids(_ctx);
         _f.refreshParam(para, _maxForce, _myBoid);
-        _f.checkCollision(_ctx, _myBoid, 0.1f);
+        _f.checkCollision(_ctx, _myBoid, 0.05f);
         drawBoids(_f.getList(), _ctx);
         drawRadius(_myBoid, _ctx, _radiusShow);
         drawBoid(_myBoid, _ctx);
