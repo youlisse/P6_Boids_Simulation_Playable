@@ -81,8 +81,14 @@ void drawBackground(p6::Context& context, bool trail, float alpha)
         context.background(p6::Color(.9f, .9f, .9f, alpha));
 }
 
-void printKill(p6::Context& context, Flock& f)
+void printScore(p6::Context& context, Flock& f)
 {
     const std::u16string text = to_u16string(f.getScore());
     context.text(text, p6::Center(context.aspect_ratio() - context.aspect_ratio() / 33, 1.f - 0.07), p6::Angle());
+}
+
+void explosion(p6::Context& context, p6::Center pos)
+{
+    context.fill = {1.f, 1.f, 1.f, 1.0f};
+    context.circle(p6::Center(pos), 0.1);
 }

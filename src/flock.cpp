@@ -3,6 +3,7 @@
 #include <string>
 #include "boid.hpp"
 #include "controllableBoid.hpp"
+#include "draw.hpp"
 #include "enemyBoid.hpp"
 
 std::vector<enemyBoid> Flock::getList()
@@ -18,20 +19,20 @@ void Flock::refreshBoids(p6::Context& context)
         b.refreshPos();
     }
 }
-void Flock::flocking(p6::Context& context, float percentSteering)
+void Flock::flocking(p6::Context& context, float percentSteering, paramSteering para)
 {
     for (enemyBoid& boid : _enemyBoidsList)
     {
-        boid.update(_boidsList, context, percentSteering);
+        boid.update(_boidsList, context, percentSteering, para);
     }
 }
-void Flock::flocking(p6::Context& context, controllableBoid& b, float percent)
+void Flock::flocking(p6::Context& context, controllableBoid& b, float percent, paramSteering para)
 {
     std::vector<boids> boidsListPlusMe = _boidsList;
     boidsListPlusMe.push_back(b);
     for (enemyBoid& boid : _enemyBoidsList)
     {
-        boid.update(boidsListPlusMe, context, percent);
+        boid.update(boidsListPlusMe, context, percent, para);
     }
 }
 
@@ -87,6 +88,7 @@ void Flock::checkCollision(p6::Context& context, controllableBoid& ourBoid, floa
             for (int i = 0; i < static_cast<int>(_enemyBoidsList.size()); i++)
                 if (_enemyBoidsList[i].checkId(id))
                 {
+                    explosion(context, p6::Center(_enemyBoidsList[i].getX(), _enemyBoidsList[i].getY()));
                     _enemyBoidsList.erase(_enemyBoidsList.begin() + i);
                     _boidsList.erase(_boidsList.begin() + i);
                 }
