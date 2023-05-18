@@ -2,18 +2,47 @@
 #include "boid.hpp"
 #include "flock.hpp"
 
-glm::vec2 enemyBoid::calculateSeparation(const std::vector<boids>& boidsList, p6::Context& context)
+void enemyBoid::setR(float value) //
+{
+    _rAvoid = value;
+}
+void enemyBoid::setRCohesion(float value) //
+{
+    _rCohesion = value;
+}
+void enemyBoid::setRAlign(float value) //
+{
+    _rAlign = value;
+}
+void enemyBoid::setMaxForce(float value) //
+{
+    _maxForce = value;
+}
+float enemyBoid::getR() const //
+{
+    return _rAvoid;
+}
+float enemyBoid::getRCohesion() const //
+{
+    return _rCohesion;
+}
+float enemyBoid::getRAlign() const //
+{
+    return _rAlign;
+}
+glm::vec2 enemyBoid::calculateSeparation(const std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context)
 {
     glm::vec2 separation = {0.0, 0.0};
     int       count      = 0;
-    for (boids boid : boidsList)
+    for (const auto& boidPtr : boidsList)
     {
-        if (&boid != this && boid.whoAmI())
+        const boid& currentBoid = *boidPtr;
+        if (&currentBoid != this && currentBoid.whoAmI())
         {
-            float distance = distanceTo(boid, context);
+            float distance = distanceTo(boidPtr, context);
             if (distance < _rAvoid && distance > 0.0f)
             {
-                glm::vec2 diff = _position - glm::vec2(boid.getX(), boid.getY());
+                glm::vec2 diff = _position - glm::vec2(currentBoid.getX(), currentBoid.getY());
                 separation += glm::normalize(diff);
                 count += 1;
             }
@@ -26,18 +55,19 @@ glm::vec2 enemyBoid::calculateSeparation(const std::vector<boids>& boidsList, p6
     return separation;
 }
 
-glm::vec2 enemyBoid::calculateAlignment(const std::vector<boids>& boidsList, p6::Context& context)
+glm::vec2 enemyBoid::calculateAlignment(const std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context)
 {
-    glm::vec2 alignment(0.0f);
-    int       count = 0;
-    for (boids boid : boidsList)
+    glm::vec2 alignment = {0.0, 0.0};
+    int       count     = 0;
+    for (const auto& boidPtr : boidsList)
     {
-        if (&boid != this && !boid.whoAmI())
+        const boid& currentBoid = *boidPtr;
+        if (&currentBoid != this && !currentBoid.whoAmI())
         {
-            float distance = distanceTo(boid, context);
+            float distance = distanceTo(boidPtr, context);
             if (distance < _rAlign && distance > 0.0f)
             {
-                alignment += glm::vec2(boid.dirX(), boid.dirY());
+                alignment += glm::vec2(currentBoid.dirX(), currentBoid.dirY());
                 count += 1;
             }
         }
@@ -50,18 +80,19 @@ glm::vec2 enemyBoid::calculateAlignment(const std::vector<boids>& boidsList, p6:
     return alignment;
 }
 
-glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::Context& context)
+glm::vec2 enemyBoid::calculateCohesion(const std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context)
 {
     glm::vec2 cohesion(0.0f);
     int       count = 0;
-    for (boids boid : boidsList)
+    for (const auto& boidPtr : boidsList)
     {
-        if (&boid != this && !boid.whoAmI())
+        const boid& currentBoid = *boidPtr;
+        if (&currentBoid != this && !boidPtr->whoAmI())
         {
-            float distance = distanceTo(boid, context);
+            float distance = distanceTo(boidPtr, context);
             if (distance < _rCohesion && distance > _rCohesion * 0.50f && distance > 0.0f)
             {
-                cohesion += glm::vec2(boid.getX(), boid.getY());
+                cohesion += glm::vec2(boidPtr->getX(), boidPtr->getY());
                 count += 1;
             }
         }
@@ -75,11 +106,12 @@ glm::vec2 enemyBoid::calculateCohesion(const std::vector<boids>& boidsList, p6::
     return cohesion;
 }
 
-void enemyBoid::update(const std::vector<boids>& boidsList, p6::Context& context, float percentSteering, paramSteering param)
+void enemyBoid::update(std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context, float percentSteering, paramSteering param)
 {
     glm::vec2 avoid     = calculateSeparation(boidsList, context);
     glm::vec2 alignment = calculateAlignment(boidsList, context);
     glm::vec2 cohesion  = calculateCohesion(boidsList, context);
+    // std::cout << cohesion[0] << " " << alignment[0] << " " << avoid[0] << " " << std::endl;
 
     glm::vec2 desiredDirection = avoid * param._Avoid + alignment * param._Align + cohesion * param._Cohesion;
 

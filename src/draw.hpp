@@ -3,10 +3,10 @@
 #include "enemyBoid.hpp"
 #include "flock.hpp"
 
-void drawBoids(const std::vector<enemyBoid>& listedPosition, p6::Context& context);
-void drawBoid(const controllableBoid& boid, p6::Context& context);
-void drawRadius(const std::vector<enemyBoid>& listedPosition, p6::Context& context);
-void drawRadius(const controllableBoid& boid, p6::Context& context, bool radiusShow);
+void drawBoids(const std::vector<std::unique_ptr<boid>>& listedPosition, p6::Context& context);
+void drawBoid(const std::unique_ptr<boid>& boid, p6::Context& context);
+void drawRadius(const std::vector<std::unique_ptr<boid>>& listedPosition, p6::Context& context);
+void drawRadius(const std::unique_ptr<boid>& boid, p6::Context& context, bool radiusShow, paramRadius _paraRadius);
 void drawLife(float value, p6::Context& context);
 void drawBackground(p6::Context& context, bool trail, float alpha);
 void printScore(p6::Context& context, Flock& f);

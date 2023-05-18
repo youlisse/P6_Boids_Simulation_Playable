@@ -4,6 +4,7 @@
         "boids",
         "calculateseparation",
         "Coef",
+        "enemyboids",
         "stering"
     ]
 }

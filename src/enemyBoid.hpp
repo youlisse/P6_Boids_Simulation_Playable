@@ -5,22 +5,31 @@
 #include "controllableBoid.hpp"
 #include "glm/fwd.hpp"
 
-struct paramSteering {
-    float _Avoid    = 0.3f;
-    float _Cohesion = 0.4f;
-    float _Align    = 0.5f;
-};
+class enemyBoid : public boid {
+private:
+    float     _rAvoid{};
+    float     _rCohesion{};
+    float     _rAlign{};
+    float     _maxForce{};
+    glm::vec2 _velocity;
 
-class enemyBoid : public boids {
 public:
+    float getR() const override;
+    float getRCohesion() const override;
+    float getRAlign() const override;
+    void  setR(float value) override;
+    void  setRCohesion(float value) override;
+    void  setRAlign(float value) override;
+    void  setMaxForce(float value) override;
+
     ~enemyBoid() override = default;
 
-    glm::vec2 calculateSeparation(const std::vector<boids>& boidsList, p6::Context& context);
-    glm::vec2 calculateAlignment(const std::vector<boids>& boidsList, p6::Context& context);
-    glm::vec2 calculateCohesion(const std::vector<boids>& boidsList, p6::Context& context);
-    void      update(const std::vector<boids>& boidsList, p6::Context& context, float percent, paramSteering param);
+    glm::vec2 calculateSeparation(const std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context);
+    glm::vec2 calculateAlignment(const std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context);
+    glm::vec2 calculateCohesion(const std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context);
+    void      update(std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context, float percent, paramSteering param) override;
     explicit enemyBoid(p6::Context& context)
-        : boids(context) {}
+        : boid(context), _rAvoid(.045f), _rCohesion(.1f), _rAlign(.12f), _maxForce(0.9), _velocity(glm::vec2(.0f)) {}
 };
 
 #endif // ENEMY_BOID_HPP

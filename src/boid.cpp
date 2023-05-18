@@ -1,76 +1,79 @@
 #include "boid.hpp"
-
-bool boids::checkId(int id) const
+void cout()
+{
+    std::cout << " i'm there\n";
+}
+bool boid::checkId(int id) const
 {
     return this->_id == id;
 }
 
-int boids::getId() const
+int boid::getId() const
 {
     return this->_id;
 }
-float boids::getX() const
+float boid::getX() const
 {
     return _position.x;
 }
-float boids::getY() const
+float boid::getY() const
 {
     return _position.y;
 }
-float boids::dirX() const
+float boid::dirX() const
 {
     return _direction.x;
 }
-float boids::dirY() const
+float boid::dirY() const
 {
     return _direction.y;
 }
-void boids::setR(float value)
+void boid::setR(float value) //
 {
-    _rAvoid = value;
 }
-void boids::setRCohesion(float value)
+void boid::setRCohesion(float value) //
 {
-    _rCohesion = value;
 }
-void boids::setRAlign(float value)
+void boid::setRAlign(float value) //
 {
-    _rAlign = value;
 }
-void boids::setMaxForce(float value)
+void boid::setMaxForce(float value) //
 {
-    _maxForce = value;
 }
-float boids::getR() const
+float boid::getR() const //
 {
-    return _rAvoid;
+    return 0;
 }
-float boids::getRCohesion() const
+float boid::getRCohesion() const //
 {
-    return _rCohesion;
+    return 0;
 }
-float boids::getRAlign() const
+float boid::getRAlign() const //
 {
-    return _rAlign;
+    return 0;
 }
 
-void boids::checkOutOfBounce(p6::Context& context)
+void boid::update(std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context, float percent, paramSteering param)
 {
-    if (_position.x > context.aspect_ratio())
-        _position.x = -context.aspect_ratio();
-    if (_position.x < -context.aspect_ratio())
-        _position.x = context.aspect_ratio();
-    if (_position.y > 1)
-        _position.y = -1;
-    if (_position.y < -1)
-        _position.y = 1;
+    // cout();
+}
+void boid::controlBoids(p6::Context& context)
+{}
+float boid::refreshLife() const
+{
+    return 0.f;
+}
+void boid::addLife()
+{
 }
 
-float boids::distanceTo(boids other_boid, p6::Context& context)
+float boid::distanceTo(const std::unique_ptr<boid>& other_boid, p6::Context& context)
 {
     std::vector<float> tabDist;
-    float              dx = other_boid._position[0] - _position[0];
-    float              dy = other_boid._position[1] - _position[1];
+    // float              dx = 0.f;
+    // float              dy = 0.f;
+    float dx = other_boid->getX() - this->getX();
+    float dy = other_boid->getY() - this->getY();
     tabDist.push_back((std::sqrt(dx * dx + dy * dy)));
     tabDist.push_back((std::sqrt(dx * dx + (dy + 2) * (dy + 2))));
     tabDist.push_back((std::sqrt(dx * dx + (dy - 2) * (dy - 2))));
@@ -87,9 +90,25 @@ float boids::distanceTo(boids other_boid, p6::Context& context)
 
     return *std::min_element(tabDist.begin(), tabDist.end());
 }
-void boids::refreshPos()
+
+void boid::checkOutOfBounce(p6::Context& context)
+{
+    if (_position.x > context.aspect_ratio())
+        _position.x = -context.aspect_ratio();
+    if (_position.x < -context.aspect_ratio())
+        _position.x = context.aspect_ratio();
+    if (_position.y > 1)
+        _position.y = -1;
+    if (_position.y < -1)
+        _position.y = 1;
+}
+
+void boid::refreshPos()
 {
     _position += _direction * _maxSpeed * 0.4f;
 }
 
-bool boids::whoAmI(){return _team;}
+bool boid::whoAmI() const
+{
+    return _team;
+}
