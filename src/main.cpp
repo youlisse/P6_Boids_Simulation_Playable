@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
     float         _maxForce   = 0.2f;
     bool          _radiusShow = false;
     bool          _trail      = false;
+    int           _nbStart    = 40;
     {
         if (doctest::Context{}.run() != 0)
             return EXIT_FAILURE;
@@ -40,8 +41,9 @@ int main(int argc, char* argv[])
     }
     auto _ctx = p6::Context{{.title = "Boids seeker"}};
     _ctx.maximize_window();
-    Flock _f = Flock();
-
+    Flock            _f      = Flock();
+    controllableBoid _myBoid = controllableBoid(_ctx);
+    _f.initBoids(_nbStart, _ctx, _myBoid);
     _ctx.imgui = [&]() {
         ImGui::Begin("param");
         if (ImGui::Button("trail"))
@@ -65,7 +67,6 @@ int main(int argc, char* argv[])
         }
         ImGui::End();
     };
-    controllableBoid _myBoid = controllableBoid(_ctx);
 
-    play(_ctx, _f, _myBoid, _trail, _alpha, _radiusShow, _stering, _maxForce, _paraSteering, _paraRadius);
+    play(_ctx, _f, _myBoid, _trail, _alpha, _radiusShow, _stering, _maxForce, _paraSteering, _paraRadius, _nbStart);
 }

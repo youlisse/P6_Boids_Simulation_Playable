@@ -45,8 +45,10 @@ public:
     virtual void  setMaxForce(float r);
     virtual void  update(std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context, float percent, paramSteering param);
     virtual void  controlBoids(p6::Context& context);
-    virtual float refreshLife() const;
+    virtual void  refreshLife();
     virtual void  addLife();
+    virtual float life() const;
+    virtual bool  imDead();
 
     explicit boid(p6::Context& context)
         : _id(_cpt++), _team(false), _position(p6::random::point(context.aspect_ratio())), _direction(p6::random::direction()), _maxSpeed(p6::random::number(0.013f, 0.028f)) {}

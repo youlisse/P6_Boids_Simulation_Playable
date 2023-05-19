@@ -59,12 +59,20 @@ void boid::update(std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& co
 }
 void boid::controlBoids(p6::Context& context)
 {}
-float boid::refreshLife() const
+void boid::refreshLife()
 {
-    return 0.f;
 }
+float boid::life() const
+{
+    return 0.0;
+}
+
 void boid::addLife()
 {
+}
+bool boid::imDead()
+{
+    return false;
 }
 
 float boid::distanceTo(const std::unique_ptr<boid>& other_boid, p6::Context& context)

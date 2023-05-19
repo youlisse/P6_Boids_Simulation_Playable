@@ -1,4 +1,5 @@
 #include "flock.hpp"
+#include <cstdlib>
 #include <ratio>
 #include <string>
 #include <vector>
@@ -112,4 +113,13 @@ void Flock::checkCollision(p6::Context& context, std::unique_ptr<boid>& ourBoid,
 int Flock::getScore() const
 {
     return _score;
+}
+void Flock::reset()
+{
+    _score = 0;
+    for (auto& b : _boidsList)
+    {
+        // if()
+        _boidsList.pop_back();
+    }
 }

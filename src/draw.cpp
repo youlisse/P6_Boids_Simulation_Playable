@@ -97,3 +97,10 @@ void explosion(p6::Context& context, p6::Center pos)
     context.fill = {1.f, 1.f, 1.f, 1.0f};
     context.circle(p6::Center(pos), 0.1);
 }
+void printReset(p6::Context& context, Flock& f)
+{
+    const std::u16string text = to_u16string(f.getScore());
+    context.text(text, p6::Center(0.0f, 0.1f), p6::Angle());
+    const std::u16string message = u" Press Mouse To Restart ";
+    context.text(message, p6::Center(0.0f, 0.0f), p6::Angle());
+}

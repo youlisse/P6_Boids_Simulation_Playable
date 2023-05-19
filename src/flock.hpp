@@ -31,5 +31,6 @@ public:
     void                   killBoid(controllableBoid& b);
     void                   checkCollision(p6::Context& context, std::unique_ptr<boid>& ourBoid, float radius);
     int                    getScore() const;
+    void                   reset();
 };
 #endif

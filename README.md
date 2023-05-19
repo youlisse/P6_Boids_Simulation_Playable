@@ -5,21 +5,22 @@ This template contains all the things you need to get started with a clean and m
 
 > **Please read the first three chapters very carefully as this project requires some specific setup, in particular when downloading (cloning) the repository.**
 
-- [Setting up](#setting-up)
-  - [Creating a repository](#creating-a-repository)
-  - [Downloading your repository](#downloading-your-repository)
-  - [Compiling](#compiling)
-  - [Clangd](#clangd)
-  - [Formatter](#formatter)
-  - [Linter](#linter)
-- [Coding](#coding)
-  - [Renaming the project](#renaming-the-project)
-  - [Folder structure](#folder-structure)
-  - [p6](#p6)
-- [Going further](#going-further)
-  - [Writing tests](#writing-tests)
-  - [Continuous Integration (CI)](#continuous-integration-ci)
-  - [Warnings as errors](#warnings-as-errors)
+- [Simple-p6-Setup](#simple-p6-setup)
+  - [Setting up](#setting-up)
+    - [Creating a repository](#creating-a-repository)
+    - [Downloading your repository](#downloading-your-repository)
+    - [Compiling](#compiling)
+    - [Clangd](#clangd)
+    - [Formatter](#formatter)
+    - [Linter](#linter)
+  - [Coding](#coding)
+    - [Renaming the project](#renaming-the-project)
+    - [Folder structure](#folder-structure)
+    - [p6](#p6)
+  - [Going further](#going-further)
+    - [Writing tests](#writing-tests)
+    - [Continuous Integration (CI)](#continuous-integration-ci)
+    - [Warnings as errors](#warnings-as-errors)
 
 ## Setting up
 
@@ -27,7 +28,8 @@ This template contains all the things you need to get started with a clean and m
 
 First, create your own repository based on this one. If you are using GitHub you can use this repository as a template:
 
-![image](https://user-images.githubusercontent.com/45451201/217287736-20058d69-f0ed-40ff-b4e5-cfd852e2ba82.png)
+![image](https://imgur.com/DVcU7Mp)
+![image](https://imgur.com/rJSehVm)
 
 Otherwise simply create a repository on your own and copy-paste all the files in this repo to your new repo.
 

@@ -10,16 +10,17 @@ private:
 
 public:
     ~controllableBoid() override = default;
-    void  controlBoids(p6::Context& context) override;
-    float refreshLife() const override;
-    void  addLife() override;
+    void controlBoids(p6::Context& context) override;
+    void refreshLife() override;
+    void addLife() override;
     explicit controllableBoid(p6::Context& context)
         : boid(context), _health(1.f)
     {
         this->_maxSpeed = .032f;
         this->_team     = true;
     };
-    bool imDeaD();
+    bool  imDead() override;
+    float life() const override;
 };
 
 #endif // OUR_BOID_HPP

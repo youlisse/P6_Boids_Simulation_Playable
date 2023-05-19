@@ -6,23 +6,28 @@ void controllableBoid::controlBoids(p6::Context& context)
     {
         _direction += glm::vec2(_direction.y / 7, -_direction.x / 7);
     }
-    if (context.key_is_held(263) || context.key_is_held(81)) // gauche
+    if (context.key_is_held(263) || context.key_is_held(65)) // gauche
     {
         _direction += glm::vec2(-_direction.y / 7, _direction.x / 7);
     }
     checkOutOfBounce(context);
     _direction = glm::normalize(_direction);
 }
-float controllableBoid::refreshLife() const
+
+float controllableBoid::life() const
+{
+    return this->_health;
+}
+void controllableBoid::refreshLife()
 {
     this->_health -= 0.003f;
-    return this->_health;
 }
 void controllableBoid::addLife()
 {
     this->_health += 0.06f;
 }
-bool controllableBoid::imDeaD()
+bool controllableBoid::imDead()
 {
-    return this->_health > 0;
+    std::cout << this->life() << std::endl;
+    return this->life() < 0.f;
 }
