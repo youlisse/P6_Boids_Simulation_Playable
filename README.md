@@ -28,8 +28,8 @@ This template contains all the things you need to get started with a clean and m
 
 First, create your own repository based on this one. If you are using GitHub you can use this repository as a template:
 
-![image](https://github.com/youlisse/p6/blob/main/Screenshot%20from%202023-05-19%2011-59-00.png)
-![image](https://github.com/youlisse/p6/blob/main/Screenshot%20from%202023-05-19%2011-59-29.png)
+![image](https://raw.githubusercontent.com/youlisse/p6/blob/main/SScreenshot%20from%202023-05-19%2011-59-00.png)
+![image](https://raw.githubusercontent.com/youlisse/p6/blob/main/Screenshot%20from%202023-05-19%2011-59-29.png)
 
 
 Otherwise simply create a repository on your own and copy-paste all the files in this repo to your new repo.
