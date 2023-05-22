@@ -29,7 +29,7 @@ void play(p6::Context& ctx, Flock& f, controllableBoid& myBoid, bool& trail, flo
             drawBackground(ctx, trail, alpha);
             f.returnMe()->controlBoids(ctx);
             f.flocking(ctx, stering, paraSteering);
-            f.refreshBoids(ctx);
+            f.refreshBoids(ctx, nbStart);
             f.refreshParam(paraRadius, maxForce);
             drawBoids(f.getList(), ctx);
             drawRadius(f.returnMe(), ctx, radiusShow, paraRadius);

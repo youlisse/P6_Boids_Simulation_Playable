@@ -12,3 +12,4 @@ void drawBackground(p6::Context& context, bool trail, float alpha);
 void printScore(p6::Context& context, Flock& f);
 void explosion(p6::Context& context, p6::Center pos);
 void printReset(p6::Context& context, Flock& f);
+void printHighScores(p6::Context& context, int value, int iteration);

@@ -101,6 +101,13 @@ void printReset(p6::Context& context, Flock& f)
 {
     const std::u16string text = to_u16string(f.getScore());
     context.text(text, p6::Center(0.0f, 0.1f), p6::Angle());
-    const std::u16string message = u" Press Mouse To Restart ";
+    const std::u16string message = u" Press Mouse To Restart";
     context.text(message, p6::Center(0.0f, 0.0f), p6::Angle());
+    const std::u16string message2 = u" HighScores";
+    context.text(message2, p6::Center(0.0f, -0.1f), p6::Angle());
+}
+void printHighScores(p6::Context& context, int value, int iteration)
+{
+    const std::u16string text = to_u16string(value);
+    context.text(text, p6::Center(0.0f, static_cast<float>(iteration) * (-0.1f) - 0.2f), p6::Angle());
 }

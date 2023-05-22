@@ -18,13 +18,34 @@ std::vector<std::unique_ptr<boid>>& Flock::getList()
 {
     return _boidsList;
 }
-
-void Flock::refreshBoids(p6::Context& context)
+std::vector<std::unique_ptr<boid>> Flock::copyList()
 {
+    std::vector<std::unique_ptr<boid>> copiedList;
+    copiedList.reserve(_boidsList.size() - 1);
+    for (const auto& b : _boidsList)
+    {
+        if (!b->whoAmI())
+            copiedList.push_back(std::make_unique<boid>(*b));
+    }
+    return copiedList;
+}
+
+void Flock::refreshBoids(p6::Context& context, int nb)
+{
+    spawn = true;
     for (auto& b : _boidsList)
     {
         b->checkOutOfBounce(context);
         b->refreshPos();
+        if (!b->whoAmI() && spawn)
+
+            checkNaissance(context, b, 0.0023);
+    }
+    // i need to get out of this loop before i modify it and check if the list is not too big
+    if (!spawn && static_cast<int>(_boidsList.size()) < (nb + nb / 2))
+    {
+        enemyBoid newBoid(context);
+        addBoids(newBoid);
     }
 }
 
@@ -62,10 +83,6 @@ void Flock::refreshParam(paramRadius para, float maxForce)
             b->setMaxForce(maxForce);
         }
     }
-    // ourBoid.setR(para._rAvoid);
-    // ourBoid.setRAlign(para._rAlign);
-    // ourBoid.setRCohesion(para._rCohesion);
-    // ourBoid.setMaxForce(maxForce);
 }
 void Flock::killBoid(controllableBoid& b)
 {
@@ -73,6 +90,24 @@ void Flock::killBoid(controllableBoid& b)
     if (!_boidsList.empty())
     {
         _boidsList.pop_back();
+    }
+}
+
+void Flock::checkNaissance(p6::Context& context, std::unique_ptr<boid>& Boid, float radius)
+{
+    float                              distance = 0.f;
+    std::vector<std::unique_ptr<boid>> list     = copyList();
+    for (auto& it : list)
+    {
+        {
+            distance = it->distanceTo(Boid, context);
+            if (Boid != it && distance > 0.0f && distance < radius && !it->whoAmI())
+            {
+                // // add boid condition
+                spawn = false;
+                break;
+            }
+        }
     }
 }
 
