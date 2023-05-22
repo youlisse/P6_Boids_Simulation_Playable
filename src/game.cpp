@@ -8,6 +8,8 @@ void play(p6::Context& ctx, Flock& f, controllableBoid& myBoid, bool& trail, flo
         {
             ctx.pause();
             printReset(ctx, f);
+            addScore(f.getScore());
+            displayScores(ctx);
             f.reset();
 
             ctx.mouse_pressed = [&ctx](p6::MouseButton button) {

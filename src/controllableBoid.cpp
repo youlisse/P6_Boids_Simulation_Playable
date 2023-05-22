@@ -28,6 +28,5 @@ void controllableBoid::addLife()
 }
 bool controllableBoid::imDead()
 {
-    std::cout << this->life() << std::endl;
     return this->life() < 0.f;
 }
