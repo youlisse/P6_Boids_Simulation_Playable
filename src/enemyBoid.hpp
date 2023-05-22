@@ -30,6 +30,11 @@ public:
     void      update(std::vector<std::unique_ptr<boid>>& boidsList, p6::Context& context, float percent, paramSteering param) override;
     explicit enemyBoid(p6::Context& context)
         : boid(context), _rAvoid(.045f), _rCohesion(.1f), _rAlign(.12f), _maxForce(0.9), _velocity(glm::vec2(.0f)) {}
+    explicit enemyBoid(p6::Context& context, glm::vec2 pos)
+        : boid(context), _rAvoid(.045f), _rCohesion(.1f), _rAlign(.12f), _maxForce(0.9), _velocity(glm::vec2(.0f))
+    {
+        _position = pos;
+    }
 };
 
 #endif // ENEMY_BOID_HPP

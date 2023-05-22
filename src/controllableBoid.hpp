@@ -16,7 +16,7 @@ public:
     explicit controllableBoid(p6::Context& context)
         : boid(context), _health(1.f)
     {
-        this->_maxSpeed = .032f;
+        this->_maxSpeed = .035f;
         this->_team     = true;
     };
     bool  imDead() override;

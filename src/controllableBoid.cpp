@@ -20,11 +20,11 @@ float controllableBoid::life() const
 }
 void controllableBoid::refreshLife()
 {
-    this->_health -= 0.003f;
+    this->_health -= 0.005f;
 }
 void controllableBoid::addLife()
 {
-    this->_health += 0.06f;
+    this->_health += 0.05f;
 }
 bool controllableBoid::imDead()
 {

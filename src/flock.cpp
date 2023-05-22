@@ -33,18 +33,25 @@ std::vector<std::unique_ptr<boid>> Flock::copyList()
 void Flock::refreshBoids(p6::Context& context, int nb)
 {
     spawn = true;
+    glm::vec2 where(0.0f);
     for (auto& b : _boidsList)
     {
         b->checkOutOfBounce(context);
         b->refreshPos();
         if (!b->whoAmI() && spawn)
+        {
+            checkNaissance(context, b, 0.023);
 
-            checkNaissance(context, b, 0.0023);
+            if (!spawn)
+                where = glm::vec2(b->getX(), b->getX());
+        }
     }
     // i need to get out of this loop before i modify it and check if the list is not too big
     if (!spawn && static_cast<int>(_boidsList.size()) < (nb + nb / 2))
     {
-        enemyBoid newBoid(context);
+        // cout();
+        // std::cout << where.x << where.y << std::endl;
+        enemyBoid newBoid(context, where);
         addBoids(newBoid);
     }
 }
