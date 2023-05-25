@@ -9,5 +9,6 @@
 #include "imgui.h"
 #include "p6/p6.h"
 #include "saveScore.hpp"
-void play(p6::Context& ctx, Flock& f, controllableBoid& myBoid, bool& trail, float& alpha, bool& radiusShow, float& stering, float& maxForce, paramSteering& paraSteering, paramRadius& paraRadius, int nbStart);
+void randomizer(float& stering, float& maxForce, paramSteering& paraSteering, paramRadius& paraRadius, int& nbStart);
+void play(p6::Context& ctx, Flock& f, controllableBoid& myBoid, bool& trail, float& alpha, bool& radiusShow, float& stering, float& maxForce, paramSteering& paraSteering, paramRadius& paraRadius, int& nbStart);
 #endif

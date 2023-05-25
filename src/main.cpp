@@ -20,10 +20,6 @@
 int main(int argc, char* argv[])
 
 {
-    //     Game game;
-    //     game.play();
-    // game = Game();
-
     paramRadius   _paraRadius;
     paramSteering _paraSteering;
     float         _alpha      = 0.2f;
@@ -39,11 +35,13 @@ int main(int argc, char* argv[])
         if (no_gpu_available)
             return EXIT_SUCCESS;
     }
+    // creation de fenetre
     auto _ctx = p6::Context{{.title = "Boids seeker"}};
     _ctx.maximize_window();
     Flock            _f      = Flock();
     controllableBoid _myBoid = controllableBoid(_ctx);
     _f.initBoids(_nbStart, _ctx, _myBoid);
+    // parameter ImGUI
     _ctx.imgui = [&]() {
         ImGui::Begin("param");
         if (ImGui::Button("trail"))
@@ -67,6 +65,6 @@ int main(int argc, char* argv[])
         }
         ImGui::End();
     };
-
+    /// create la party et relance la party onMouseClick
     play(_ctx, _f, _myBoid, _trail, _alpha, _radiusShow, _stering, _maxForce, _paraSteering, _paraRadius, _nbStart);
 }

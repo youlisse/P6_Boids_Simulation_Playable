@@ -30,7 +30,7 @@ std::vector<std::unique_ptr<boid>> Flock::copyList()
     return copiedList;
 }
 
-void Flock::refreshBoids(p6::Context& context, int nb)
+void Flock::refreshBoids(p6::Context& context)
 {
     spawn = true;
     glm::vec2 where(0.0f);
@@ -47,7 +47,7 @@ void Flock::refreshBoids(p6::Context& context, int nb)
         }
     }
     // i need to get out of this loop before i modify it and check if the list is not too big
-    if (!spawn && static_cast<int>(_boidsList.size()) < (nb + nb / 2))
+    if (!spawn && static_cast<int>(_boidsList.size()) < 70)
     {
         // cout();
         // std::cout << where.x << where.y << std::endl;
@@ -108,7 +108,7 @@ void Flock::checkNaissance(p6::Context& context, std::unique_ptr<boid>& Boid, fl
     {
         {
             distance = it->distanceTo(Boid, context);
-            if (Boid != it && distance > 0.0f && distance < radius && !it->whoAmI())
+            if (Boid != it && distance > 0.0f && distance < radius && !it->whoAmI() && 0.20 < it->distanceTo(returnMe(), context))
             {
                 // // add boid condition
                 spawn = false;

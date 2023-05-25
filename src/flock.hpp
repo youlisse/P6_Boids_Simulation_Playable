@@ -26,7 +26,7 @@ public:
     Flock()
         : _score(0){};
     std::unique_ptr<boid>& returnMe();
-    void                   refreshBoids(p6::Context& context, int nb);
+    void                   refreshBoids(p6::Context& context);
     void                   flocking(p6::Context& context, float percent, paramSteering para);
     void                   addBoids(enemyBoid& boids);
     void                   initBoids(int nbElem, p6::Context& context, const controllableBoid& me);
